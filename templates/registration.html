@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+      /* Additional CSS styles for better form layout */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        #registrationForm {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center; /* Vertically center checkboxes */
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        input[type="checkbox"] {
+            margin-right: 5px;
+            appearance: none; /* Remove default checkbox styles */
+            width: 18px;
+            height: 18px;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        input[type="checkbox"]:checked {
+            background-color: #333; /* Change background color when checked */
+            border: 2px solid #fff;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>User Registration</h1>
+    </header>
+    <div id="registrationForm">
+        <form action="/register" method="POST">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label class="checkbox-label">Cuisine Preferences:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-label">
+                    <input type="checkbox" id="american" name="cuisine" value="American">
+                    <label for="american">American</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="italian" name="cuisine" value="Italian">
+                    <label for="italian">Italian</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="turkish" name="cuisine" value="Turkish">
+                    <label for="turkish">Turkish</label>
+                </div>
+                <!-- Add more cuisine options here -->
+                <div class="checkbox-label">
+                    <input type="checkbox" id="delicatessen" name="cuisine" value="Delicatessen">
+                    <label for="delicatessen">Delicatessen</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="jewish_kosher" name="cuisine" value="Jewish/kosher">
+                    <label for="jewish_kosher">Jewish/kosher</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="hamburgers" name="cuisine" value="Hamburgers">
+                    <label for="hamburgers">Hamburgers</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="ice_cream" name="cuisine" value="Ice cream">
+                    <label for="ice_cream">Ice cream</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="irish" name="cuisine" value="Irish">
+                    <label for="irish">Irish</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="chicken" name="cuisine" value="Chicken">
+                    <label for="chicken">Chicken</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="caribbean" name="cuisine" value="Caribbean">
+                    <label for="caribbean">Caribbean</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="donuts" name="cuisine" value="Donuts">
+                    <label for="donuts">Donuts</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="sandwich" name="cuisine" value="Sandwich">
+                    <label for="sandwich">Sandwich</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="bagels" name="cuisine" value="Bagels">
+                    <label for="bagels">Bagels</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="continental" name="cuisine" value="Continental">
+                    <label for="continental">Continental</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="steak" name="cuisine" value="Steak">
+                    <label for="steak">Steak</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="german" name="cuisine" value="German">
+                    <label for="german">German</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="polish" name="cuisine" value="Polish">
+                    <label for="polish">Polish</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="latin" name="cuisine" value="Latin">
+                    <label for="latin">Latin</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="mexican" name="cuisine" value="Mexican">
+                    <label for="mexican">Mexican</label>
+                </div>
+                <div class="checkbox-label">
+                    <input type="checkbox" id="spanish" name="cuisine" value="Spanish">
+                    <label for="spanish">Spanish</label>
+                </div>
+                <!-- Add more cuisine options as needed -->
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

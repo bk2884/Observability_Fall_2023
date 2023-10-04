@@ -2,7 +2,6 @@ import os
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 import pandas as pd
-
 # MongoDB connection
 mongo_client = MongoClient(f'mongodb+srv://mr4331:May0509619024@cluster0.xw2wecw.mongodb.net/?retryWrites=true&w=majority')
 db = mongo_client['sample_restaurants']
@@ -16,7 +15,7 @@ def search(search_term):
                     "index": "sample_restaurants",
                     "text": {
                         "query": search_term,
-                        "path": "name",  # Specify the field to search in
+                        "path": ["name", "cuisine", "borough"],   # Specify the field to search in
                         "fuzzy": {
                             "maxEdits": 2,
                             "prefixLength": 0
@@ -27,17 +26,16 @@ def search(search_term):
             {
                 "$project":{
                     "_id":0,
-                    "name":1
+                    "name":1,
+                    "borough":1,
                 }
             },
             {
-                "$limit": 10
+                "$limit": 20
             }
         ])
-
-        # Convert the results to a list of dictionaries
         results_list = pd.DataFrame(search_results)
-        print(results_list)
+        print(results_list);
         return results_list
 
     except Exception as e:

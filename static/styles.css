@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Tahoma, sans-serif;
 }
 
 header {
@@ -28,5 +28,6 @@ button:hover {
 }
 
 #results {
-    padding: 20px;
+    padding: 50px;
+    text-align: center;
 }

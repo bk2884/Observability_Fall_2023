@@ -1,17 +1,30 @@
-from functions import search, db
-from flask import Flask, render_template, request, redirect, url_for
+from functions import search, db, authenticate_user
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from utils import *
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def registration_page():
-    return render_template('registration.html')
+def login_page():
+    return render_template('login.html')
 
-@app.route('/index')
-def index():
-    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if authenticate_user(email, password):
+            # Authentication succeeded, redirect to index.html
+            return redirect(url_for('search_flask'))
+        else:
+            # Authentication failed, display an error message or redirect to login page
+            return render_template('login.html', error_message='Invalid email or password')
+    # Render the login page for GET requests
+    return render_template('login.html', error_message=None)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -31,12 +44,24 @@ def register():
         }
         # Save user data to MongoDB
         db.users.insert_one(user_data)
-        return redirect(url_for('index'))
+        # Redirect to the /login endpoint
+        return redirect(url_for('login'))
+    return render_template('registration.html')  # Render the registration page
 
-@app.route('/search')
+
+# @app.route('/index')
+# def index():
+#   return render_template('index.html')
+
+
+@app.route('/search', methods=['GET'])
 def search_flask():
     search_term = request.args.get('query')
-    return create_response(search(search_term))
+    if search_term:
+        results = search(search_term)
+        return jsonify(results)
+        # Redirect to index.html if no search term is provided
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

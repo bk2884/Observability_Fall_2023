@@ -3,50 +3,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     const resultsDiv = document.getElementById("results");
 
-    // Function to search for restaurants
     function searchRestaurants() {
         const searchTerm = searchInput.value.trim();
-        // Check if the search term is not empty
+
         if (searchTerm !== "") {
-            // Make an API request to /search endpoint (replace with your actual API endpoint)
-            // You can use fetch or another library like Axios for this.
-            // Example using fetch:
+            // Make an API request to the /search endpoint
             fetch(`/search?query=${searchTerm}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     // Clear previous results
                     resultsDiv.innerHTML = "";
 
-                    // Process and display the search results
                     if (data.length === 0) {
-                        resultsDiv.innerHTML = "No restaurants found.";
+                        resultsDiv.textContent = "No restaurants found.";
                     } else {
                         data.forEach(restaurant => {
-                            // Create a div element for each restaurant
                             const restaurantDiv = document.createElement("div");
-                            // Create elements for name and borough
                             const nameElement = document.createElement("p");
-                            // Set text content for name and borough
                             nameElement.textContent = "Name: " + restaurant.name + " City: " + restaurant.borough;
-                            // Append name and borough elements to the restaurant div
                             restaurantDiv.appendChild(nameElement);
-                            // Append the restaurant div to the resultsDiv
                             resultsDiv.appendChild(restaurantDiv);
                         });
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
+                    resultsDiv.textContent = "An error occurred while fetching data.";
                 });
         }
     }
 
-    // Attach an event listener to the search button for searching
     if (searchButton) {
         searchButton.addEventListener("click", searchRestaurants);
     }
 
-    // Attach an event listener to the search input field for searching on "Enter" key press
     if (searchInput) {
         searchInput.addEventListener("keyup", event => {
             if (event.key === "Enter") {
@@ -57,10 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// Function to save user registration data and redirect to index.html
+// Function to save user registration data and redirect to /login
 function saveUserDataAndRedirect() {
-    const firstNameInput = document.getElementById("firstName");
-    const lastNameInput = document.getElementById("lastName");
+    const firstNameInput = document.getElementById("first_name");
+    const lastNameInput = document.getElementById("last_name");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const cuisineInput = document.getElementById("cuisine");
@@ -87,8 +82,8 @@ function saveUserDataAndRedirect() {
                 // Handle the response (e.g., show a success message)
                 console.log(data.message);
 
-                // Redirect to index.html after successful registration
-                window.location.href = "/index";
+                // Redirect to /login after successful registration
+                window.location.href = "/login"; // Redirect to the /login endpoint
             })
             .catch(error => {
                 console.error("Error saving user data:", error);
@@ -106,4 +101,52 @@ if (registrationForm) {
 }
 
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
+    const signUpLink = document.getElementById("signUpLink"); // Add an ID to your "sign up here" link
+
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        const loginData = {
+            email: email,
+            password: password,
+        };
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "/index"; // Redirect to index.html after successful login
+            } else {
+                // Handle authentication error (display an error message if needed)
+                console.error("Authentication failed:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error authenticating user:", error);
+        });
+    });
+
+    // Add an event listener to the "sign up here" link
+    if (signUpLink) {
+        signUpLink.addEventListener("click", () => {
+            // Redirect to the registration page
+            window.location.href = "/register";
+        });
+    }
+});
 

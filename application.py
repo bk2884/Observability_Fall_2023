@@ -1,9 +1,9 @@
+
 from functions import search, db, authenticate_user
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from utils import *
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def login_page():
@@ -47,11 +47,6 @@ def register():
         # Redirect to the /login endpoint
         return redirect(url_for('login'))
     return render_template('registration.html')  # Render the registration page
-
-
-# @app.route('/index')
-# def index():
-#   return render_template('index.html')
 
 
 @app.route('/search', methods=['GET'])

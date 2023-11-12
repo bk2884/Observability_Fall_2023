@@ -1,9 +1,16 @@
-
-from functions import search, db, authenticate_user
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+from prometheus_flask_exporter import PrometheusMetrics
+from functions import search, db, authenticate_user
+from prometheus_flask_exporter import Counter
 from utils import *
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)  # Initialize Prometheus Metrics
+
+login_attempts = Counter('login_attempts', 'Number of login attempts')
+registrations = Counter('registrations', 'Number of user registrations')
+search_queries = Counter('search_queries', 'Number of search queries')
+
 
 @app.route('/')
 def login_page():
@@ -12,6 +19,7 @@ def login_page():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        login_attempts.inc()  # Increment login attempts counter
         email = request.form.get('email')
         password = request.form.get('password')
         if authenticate_user(email, password):
@@ -27,6 +35,7 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        registrations.inc()  # Increment registrations counter
         # Get user data from the registration form
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
@@ -52,6 +61,7 @@ def register():
 def search_flask():
     search_term = request.args.get('query')
     if search_term:
+        search_queries.inc()  # Increment search queries counter
         results = search(search_term)
         return jsonify(results)
         # Redirect to index.html if no search term is provided
@@ -59,4 +69,4 @@ def search_flask():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8001)
+    app.run()

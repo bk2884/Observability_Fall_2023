@@ -2,9 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from prometheus_flask_exporter import PrometheusMetrics
 from functions import search, db, authenticate_user
 from prometheus_flask_exporter import Counter
-from utils import *
 
 app = Flask(__name__)
+
+# Or use ELASTIC_APM in your application's settings
+from elasticapm.contrib.flask import ElasticAPM
+app.config['ELASTIC_APM'] = {
+  'SERVICE_NAME': 'my-service-name',
+
+  'SECRET_TOKEN': 'aRMKjDPld9ZjkZRof9',
+
+  'SERVER_URL': 'https://f17ae4172ef741c1aadac9f2de418507.apm.us-east-2.aws.elastic-cloud.com:443',
+
+  'ENVIRONMENT': 'my-environment',
+}
+
+apm = ElasticAPM(app)
 metrics = PrometheusMetrics(app)  # Initialize Prometheus Metrics
 
 login_attempts = Counter('login_attempts', 'Number of login attempts')
@@ -69,4 +82,4 @@ def search_flask():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5001, debug=False)

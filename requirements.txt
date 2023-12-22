@@ -3,3 +3,5 @@ pandas
 pymongo
 elastic-apm[flask]
 prometheus_flask_exporter
+ecs-logging
+filebeat

@@ -1,24 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_flask_exporter import PrometheusMetrics, Counter
 from functions import search, db, authenticate_user
-from prometheus_flask_exporter import Counter
+from elasticapm.contrib.flask import ElasticAPM
+from elasticapm import capture_span, get_trace_id, get_transaction_id, get_span_id
+import logging
+from ecs_logging import StdlibFormatter
+from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__)
 
-# Or use ELASTIC_APM in your application's settings
-from elasticapm.contrib.flask import ElasticAPM
+# Elastic APM configuration
 app.config['ELASTIC_APM'] = {
   'SERVICE_NAME': 'my-service-name',
-
   'SECRET_TOKEN': 'aRMKjDPld9ZjkZRof9',
-
   'SERVER_URL': 'https://f17ae4172ef741c1aadac9f2de418507.apm.us-east-2.aws.elastic-cloud.com:443',
-
   'ENVIRONMENT': 'my-environment',
 }
 
 apm = ElasticAPM(app)
-metrics = PrometheusMetrics(app)  # Initialize Prometheus Metrics
+metrics = PrometheusMetrics(app)
+
+logger = logging.getLogger('ecs_logger')
+logger.setLevel(logging.INFO)
+log_file_path = 'app.log'
+file_handler = RotatingFileHandler(log_file_path, maxBytes=1000000, backupCount=5)
+formatter = StdlibFormatter()
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 login_attempts = Counter('login_attempts', 'Number of login attempts')
 registrations = Counter('registrations', 'Number of user registrations')
@@ -74,10 +82,16 @@ def register():
 def search_flask():
     search_term = request.args.get('query')
     if search_term:
-        search_queries.inc()  # Increment search queries counter
-        results = search(search_term)
-        return jsonify(results)
-        # Redirect to index.html if no search term is provided
+        with capture_span('search_operation', 'custom', labels={'search_term': search_term}):
+            trace_id = get_trace_id()
+            transaction_id = get_transaction_id()
+            span_id = get_span_id()
+
+            logger.info(f"Search operation - Trace ID: {trace_id}, Transaction ID: {transaction_id}, Span ID: {span_id}")
+
+            search_queries.inc()
+            results = search(search_term)
+            return jsonify(results)
     return render_template('index.html')
 
 
